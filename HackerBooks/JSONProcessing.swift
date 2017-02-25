@@ -70,8 +70,10 @@ func decode(Book json: JSONDictionary) -> Book? {
                 throw HackerBooksErrors.errorSavingFile
             }
         }
+
+        let isFav = try decodeIsFav(Book: json)
         
-        return Book(title: title, pdfData: pdfData, coverImage: coverImage, tags: tags, authors: authors)
+        return Book(title: title, pdfData: pdfData, coverImage: coverImage, tags: tags, authors: authors, isFav: isFav)
     } catch HackerBooksErrors.emptyPDF {
         print("pdf no informado")
         return nil
@@ -94,8 +96,8 @@ func decode(Book json: JSONDictionary) -> Book? {
     }catch HackerBooksErrors.errorSavingFile  {
         print("Imposible guardar imagen o pdf")
         return nil
-    } catch {
-        print("error general")
+    } catch{
+        print("error general \(error)")
         return nil
     }
     
@@ -209,6 +211,16 @@ func decodePDF(pathData: JSONDataPath) throws -> Data {
     return data
 }
 
+func decodeIsFav(Book json: JSONDictionary) throws -> Bool {
+    
+    guard let isFav = json["isFav"] as! Bool? else
+    {
+        return false
+    }
+    return isFav 
+    
+}
+
 
 
 
@@ -257,6 +269,7 @@ func fileExist(fileName: String) -> Bool {
 func loadFromRemote() -> Data? {
     let url = "https://t.co/K9ziV0z3SJ"
     let jsonData = try? Data(contentsOf: URL(string: url)!)
+    print("Carga remota de librería")
     return jsonData
 
 }
@@ -272,6 +285,8 @@ func loadFromLocalFile(fileName name: String) throws -> Data? {
         throw HackerBooksErrors.notLocalJSON
     }
     
+    print("Carga local de librería")
+    
     return jsonData
 }
 //MARK: - Read File
@@ -286,10 +301,10 @@ func readFile(path: String) throws -> Data{
 
 //MARK: - Saving
 
-func saveFile(data: String, path: String) throws {
+func saveFile(string: String, path: String) throws {
     let file = localUrl(fileName: path)
     do{
-        try data.write(to: file!, atomically: true, encoding: String.Encoding.utf8)
+        try string.write(to: file!, atomically: true, encoding: String.Encoding.utf8)
     }
     catch {
         throw HackerBooksErrors.errorSavingFile
@@ -303,7 +318,7 @@ func saveFile(data: Data, path: String) throws {
     }
 }
 
-func addLocals(toResource json: JSONArray) -> JSONArray {
+func addLocals(toResource json: JSONArray, cleanFav: Bool = false) -> JSONArray {
     var newLibrary = JSONArray()
     
     for itBook in json {
@@ -327,6 +342,11 @@ func addLocals(toResource json: JSONArray) -> JSONArray {
             } else {
                 newBook[key] = value
             }
+            
+            if cleanFav {
+                newBook["isFav"] = false as AnyObject
+            }
+            
         }
         newLibrary.append(newBook)
     }

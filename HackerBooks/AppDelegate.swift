@@ -28,6 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             mustSaveFile = !fileExist(fileName: localFile)
 
             if  mustSaveFile {
+                print("Cargando de remoto.... ponte a esperar")
                 dataJson = loadFromRemote()
             } else {
                 dataJson = try loadFromLocalFile(fileName: localFile)
@@ -49,11 +50,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
 //Si mi fichero no existe en local lo salvo
             if mustSaveFile {
-                json = addLocals(toResource: json)
+                json = addLocals(toResource: json, cleanFav: true)
                 let stringJson = try serialize(json: json)
                 
                 if stringJson != nil {
-                    try saveFile(data: stringJson!, path: localFile)
+                    try saveFile(string: stringJson!, path: localFile)
+                    print("Grabo fichero")
                 }
             }
             

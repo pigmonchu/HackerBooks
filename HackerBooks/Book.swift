@@ -24,19 +24,35 @@ class Book {
     let coverImage : UIImage
     let tags       : [String]
     let authors    : [String]
+    var isFav      : Bool
+    
+    //MARK: Getters - Setters
+    var authorsList : String {
+        get {
+            return extractTags(fromArray: authors, withSeparator: ", ")
+        }
+    }
+    
+    var tagsList : String {
+        get {
+            return extractTags(fromArray: tags, withSeparator: ", ")
+        }
+    }
     
     //MARK: - Initialization
     init(title      : String,
          pdfData    : Data,
          coverImage : UIImage,
          tags       : [String],
-         authors    : [String]) {
+         authors    : [String],
+         isFav      : Bool) {
         
         self.title = title
         self.pdfData = pdfData
         self.coverImage = coverImage
         self.tags = tags
         self.authors = authors
+        self.isFav = isFav
     }
 
     //MARK: - Proxies

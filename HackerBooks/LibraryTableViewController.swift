@@ -16,6 +16,7 @@ class LibraryTableViewController: UITableViewController {
     var dict : Library.SortedLibrary
     var sections : [String]
     
+    weak var delegate: LibraryTableViewControllerDelegate? = nil
     
     //MARK: - Initiliazers
     
@@ -45,6 +46,7 @@ class LibraryTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -52,6 +54,18 @@ class LibraryTableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    // MARK: - Table view Delegate
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let book = getBook(At: indexPath) else{
+            return
+        }
+        
+//        delegate?.libraryTableViewController(self, didSelectBook: book)
+  
+        let bookVC = BookViewController(model: book)
+        self.navigationController?.pushViewController(bookVC, animated: true)
+    }
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -64,35 +78,99 @@ class LibraryTableViewController: UITableViewController {
         }
         return maybeALibrary.count
     }
-    
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sections[section]
+
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+
+        let cell = Bundle.main.loadNibNamed("LibraryTableViewHeader", owner: self, options: nil)?.first
+        
+        let headerCell : LibraryTableViewHeader
+        
+        if cell == nil {
+            let hC = UITableViewCell(style: .subtitle, reuseIdentifier: "HeaderCell")
+            headerCell =  hC as! LibraryTableViewHeader
+        } else {
+            headerCell = cell as! LibraryTableViewHeader
+        }
+        
+        headerCell.headerLabel.text = (sections[section] != "" ? sections[section] : "Favoritos").uppercased()
+        
+        return headerCell
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //Definir un id para el tipo de celda
         let cellId = "BookCell"
         
+        let book = getBook(At: indexPath)
+        //Averiguar la sección
+//        let classification = sections[indexPath.section]
+        
+        //Averiguar el libro
+//        let book = dict[classification]?[indexPath.row]
+        
+        //Crear la celda -> Es algo así como registrarla pillándola del repositorio (no me gusta)
+        
+        let cell = Bundle.main.loadNibNamed("LibraryTableViewCell", owner: self, options: nil)?.first
+        
+        let bookCell : LibraryTableViewCell
+        
+        if cell == nil {
+            let bC = UITableViewCell(style: .subtitle, reuseIdentifier: cellId)
+            bookCell =  bC as! LibraryTableViewCell
+        } else {
+            bookCell = cell as! LibraryTableViewCell
+        }
+        
+        guard let theBook = book else {
+            return bookCell
+        }
+        
+        bookCell.title.text = theBook.title
+        
+        bookCell.authors.text = extractItems(array: theBook.authors, separator: ", ")
+        bookCell.tags.text = extractItems(array: theBook.tags, separator: ", ")
+        bookCell.cover.image = theBook.coverImage
+
+        return bookCell
+    }
+    
+//MARK: Utilities
+    
+    func extractItems(array: [String], separator: String, maxLength: Int = 0, defaultText: String = "sin datos") -> String {
+        var text = ""
+        if array.count > 0 {
+            text = array[0]
+            var i = 1
+            while i < array.count {
+                text += (separator + array[i] )
+                i += 1
+            }
+        } else {
+            text = defaultText
+        }
+        
+        if maxLength > 0 && text.characters.count > maxLength {
+            let index = text.index(text.startIndex, offsetBy: maxLength)
+            text = text.substring(to: index) + "..."
+        }
+        
+        return text
+    }
+    
+    func getBook(At indexPath: IndexPath) -> Book? {
         //Averiguar la sección
         let classification = sections[indexPath.section]
         
         //Averiguar el libro
         let book = dict[classification]?[indexPath.row]
         
-        //Crear la celda
-        var cell = tableView.dequeueReusableCell(withIdentifier: cellId)
-        
-        if cell == nil { //es más elegante con un guard, así en la práctica
-            //El opcional está vacio y toca crear la celda a capón
-            cell = UITableViewCell(style: .subtitle, reuseIdentifier: cellId)
-        }
-        
-        //Configurar la celda
-        cell?.textLabel?.text       = book?.title
-        cell?.detailTextLabel?.text = book?.authors[0]
-        cell?.imageView?.image      = book?.coverImage
-        
-        //Devolverla
-        return cell!
+        return book
     }
+}
+
+//MARK: - Delegates
+
+protocol LibraryTableViewControllerDelegate : class {
+    func libraryTableViewController(_ libVC: LibraryTableViewController, didSelectBook book: Book)
+
 }

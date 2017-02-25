@@ -24,10 +24,12 @@ class Library {
     //MARK: - Stored properties
 
     fileprivate
-    var allBooks        : BooksDictionary = BooksDictionary()
+    var allBooks = BooksDictionary() //byTitle
     
-    var tagsFile  : IndexCards = IndexCards()
-    var authorsFile : IndexCards = IndexCards()
+    var tagsFile  = IndexCards()    //key: Tag, Set: Titles
+    var authorsFile = IndexCards()  //Key: Author, Set: Titles
+    fileprivate
+    var favouritesFile = Set<String>()
 
     //MARK: - Initializators
 
@@ -37,7 +39,12 @@ class Library {
             allBooks[book.title] = book
             self.storeAuthors(book: book)
             self.storeTags(book: book)
+            if book.isFav {
+                self.favouritesFile.insert(book.title)
+            }
         }
+        
+        
     }
     
     init(books: Data) {
@@ -62,7 +69,6 @@ class Library {
         return allBooks[title]
     }
     
-    
     func booksSorted(byAuthor author : String) throws -> BooksArray {
         let titles = self.authorsFile[author]?.sorted()
         return try subSebLibraryBy(arrayOfTitles: titles)
@@ -71,30 +77,57 @@ class Library {
     func booksSorted(byIndexCard ixCards : IndexCards) throws -> SortedLibrary {
         
         var dict = SortedLibrary()
-        
         for key in ixCards.keys {
             guard let values = ixCards[key] else {
                 continue
             }
             let titles = Array(values)
             
-            
             dict[key] = try subSebLibraryBy(arrayOfTitles: titles)
         }
-        
         
         return dict
     }
     
     func booksSortedByTag() throws -> SortedLibrary {
-        return try booksSorted(byIndexCard: self.tagsFile)
+        var sortedLibrary = try booksSorted(byIndexCard: self.tagsFile)
+        
+        let favourites = self.favourites
+        if favourites.count > 0 {
+            sortedLibrary[""] = favourites
+        }
+        
+        return sortedLibrary
+        
     }
     
     func booksSortedByAuthor() throws -> SortedLibrary {
-        return try booksSorted(byIndexCard: self.authorsFile)
+        var sortedLibrary =  try booksSorted(byIndexCard: self.authorsFile)
+        
+        let favourites = self.favourites
+        if favourites.count > 0 {
+            sortedLibrary[""] = favourites
+        }
+        
+        return sortedLibrary
+        
+    }
+
+    
+    var favourites : BooksArray {
+        get {
+            var favourites = BooksArray()
+            for title in self.favouritesFile {
+                favourites.append(self.book(byTitle: title)!)
+            }
+            
+            return favourites.sorted()
+        }
     }
     
+
     //MARK: Utils
+    
     fileprivate
     func storeAuthors(book : Book) {
         for author in book.authors {
