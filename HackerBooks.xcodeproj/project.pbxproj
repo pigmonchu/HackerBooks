@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		4619F2DC1E4A420400C128C3 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4619F2DB1E4A420400C128C3 /* Errors.swift */; };
+		461D4EC51E61BADE00F61639 /* PDFViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461D4EC31E61BADE00F61639 /* PDFViewController.swift */; };
+		461D4EC61E61BADE00F61639 /* PDFViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 461D4EC41E61BADE00F61639 /* PDFViewController.xib */; };
 		4637D9D51E5094D500DC70E2 /* LibraryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4637D9D31E5094D500DC70E2 /* LibraryTableViewController.swift */; };
 		4637D9D61E5094D500DC70E2 /* LibraryTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4637D9D41E5094D500DC70E2 /* LibraryTableViewController.xib */; };
 		466C88241E49F8DE00B015FC /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466C88231E49F8DE00B015FC /* Library.swift */; };
@@ -31,6 +33,8 @@
 
 /* Begin PBXFileReference section */
 		4619F2DB1E4A420400C128C3 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		461D4EC31E61BADE00F61639 /* PDFViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PDFViewController.swift; sourceTree = "<group>"; };
+		461D4EC41E61BADE00F61639 /* PDFViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PDFViewController.xib; sourceTree = "<group>"; };
 		4637D9D31E5094D500DC70E2 /* LibraryTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryTableViewController.swift; sourceTree = "<group>"; };
 		4637D9D41E5094D500DC70E2 /* LibraryTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LibraryTableViewController.xib; sourceTree = "<group>"; };
 		466C88231E49F8DE00B015FC /* Library.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
@@ -76,6 +80,8 @@
 				467F94BA1E5E596E00ACC2E5 /* LibraryTableViewHeader.xib */,
 				469515961E60C41500A7ED7C /* BookViewController.swift */,
 				469515971E60C41500A7ED7C /* BookViewController.xib */,
+				461D4EC31E61BADE00F61639 /* PDFViewController.swift */,
+				461D4EC41E61BADE00F61639 /* PDFViewController.xib */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -215,6 +221,7 @@
 				469575FA1E459A1F00FD7F06 /* Main.storyboard in Resources */,
 				467F94BC1E5E596E00ACC2E5 /* LibraryTableViewHeader.xib in Resources */,
 				467F94B41E5DCA5D00ACC2E5 /* LibraryTableViewCell.xib in Resources */,
+				461D4EC61E61BADE00F61639 /* PDFViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,6 +237,7 @@
 				466C88281E49F9AA00B015FC /* MultiDictionary.swift in Sources */,
 				466C88241E49F8DE00B015FC /* Library.swift in Sources */,
 				469575FD1E459A1F00FD7F06 /* HackerBooks.xcdatamodeld in Sources */,
+				461D4EC51E61BADE00F61639 /* PDFViewController.swift in Sources */,
 				466C88261E49F95500B015FC /* Book.swift in Sources */,
 				467F94B31E5DCA5D00ACC2E5 /* LibraryTableViewCell.swift in Sources */,
 				469575F51E459A1F00FD7F06 /* AppDelegate.swift in Sources */,

@@ -11,6 +11,7 @@ import UIKit
 class BookViewController: UIViewController {
 
     @IBOutlet weak var coverView: UIImageView!
+  
     @IBOutlet weak var authorsLabel: UILabel!
     @IBOutlet weak var TAGsLabel: UILabel!
     
@@ -40,6 +41,9 @@ class BookViewController: UIViewController {
     }
     
     @IBAction func openReader(_ sender: UIBarButtonItem) {
+        let pdfVC = PDFViewController(model: model)
+        self.navigationController?.pushViewController(pdfVC, animated: true)
+        
     }
 
     @IBAction func setUnsetFavourite(_ sender: UIBarButtonItem) {
