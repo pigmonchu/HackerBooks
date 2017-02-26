@@ -73,12 +73,17 @@ class BookViewController: UIViewController {
         
         for oldJsonBook in contextJson {
             if oldJsonBook["title"] as! String == model.title {
+                
                 for (key, value) in oldJsonBook {
                     if key == "isFav" {
                         newJsonBook[key] = model.isFav as AnyObject
                     } else {
                         newJsonBook[key] = value
                     }
+                }
+
+                if oldJsonBook["isFav"] == nil {
+                    newJsonBook["isFav"] = model.isFav as JSONObject?
                 }
                 
                 contextJson.remove(at: i)

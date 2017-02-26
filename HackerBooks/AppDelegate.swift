@@ -13,6 +13,7 @@ import CoreData
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    let IS_IPHONE = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.phone
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
@@ -60,22 +61,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
 // Creamos el modelo para la Tabla de libros
         let model = Library.init(books: books)
-        let libraryVC = LibraryTableViewController(model: model)
-        let uNav = UINavigationController(rootViewController: libraryVC)
-// Elegimos un libro y creamos el modelo del mismo
 
+// Configuración de controladores en función del dispositivo
         
-        let tag = Array(model.tagsFile.keys).sorted()[0]
-        let firstBook = model.book(atIndex: 0, forTag: tag)!
+        let rootVC:UIViewController
         
-        let bookVC = BookViewController(model: firstBook)
-        libraryVC.delegate = bookVC
-        let cNav = UINavigationController(rootViewController: bookVC)
-//SplitVC
-        let splitVC = UISplitViewController()
-        splitVC.viewControllers = [uNav, cNav]
+        if !IS_IPHONE {
+            rootVC = rootViewControllerForIPad(model)
+        } else {
+            rootVC = rootViewControllerForIPhone(model)
+        }
         
-        window?.rootViewController = splitVC
+        window?.rootViewController = rootVC
         window?.makeKeyAndVisible()
         return true
     }
@@ -166,6 +163,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
     }
+    
+    // MARK: - Select Device
+    
+    func rootViewControllerForIPad(_ model: Library) -> UIViewController {
+        let libraryVC = LibraryTableViewController(model: model)
+        let uNav = UINavigationController(rootViewController: libraryVC)
+        
+        // Elegimos un libro y creamos el modelo del mismo
+        let tag = Array(model.tagsFile.keys).sorted()[0]
+        let firstBook = model.book(atIndex: 0, forTag: tag)!
+        
+        let bookVC = BookViewController(model: firstBook)
+        libraryVC.delegate = bookVC
+        bookVC.delegate = libraryVC
+        let cNav = UINavigationController(rootViewController: bookVC)
+        //SplitVC
+        let splitVC = UISplitViewController()
+        splitVC.viewControllers = [uNav, cNav]
+        
+        return splitVC
+    }
+    
+    func rootViewControllerForIPhone(_ model: Library) -> UIViewController{
+        let libraryVC = LibraryTableViewController(model: model)
+        let uNav = UINavigationController(rootViewController: libraryVC)
+        
+        // !!!!! DETALLE IMPORTANTE, YO FIRMO UN CONTRATO CONMIGO MISMO, SOY MI DELEGADO, HAGO MI TRABAJO Y ME PAGO POR ELLO
+        libraryVC.delegate = libraryVC
+        
+        return uNav
+        
+        
+        
+    }
+    
 
 }
 

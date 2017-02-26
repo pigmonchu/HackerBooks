@@ -16,7 +16,7 @@ class PDFViewController: UIViewController {
     
     @IBOutlet weak var spinner: UIActivityIndicatorView!
     
-    let model : Book
+    var model : Book
     
     //MARK: - Initialization
     
@@ -43,6 +43,14 @@ class PDFViewController: UIViewController {
         syncViewWithModel()
         pdfReader.delegate = self
         
+        subscribe()
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        unsubscribe()
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -63,5 +71,29 @@ extension PDFViewController: UIWebViewDelegate {
         spinner.isHidden = true
     }
     
+}
+
+//MARK: - Notifications
+extension PDFViewController {
+    func subscribe() {
+        let nc = NotificationCenter.default
+        
+        nc.addObserver(forName: LibraryTableViewController.notificationName, object: nil, queue: OperationQueue.main) { (note: Notification) in
+            
+            //Extraigo el libro
+            let userInfo = note.userInfo
+            let book = userInfo?[LibraryTableViewController.bookKey]
+            
+            //Actualizo información
+            self.model = book as! Book
+            self.syncViewWithModel()
+        }
+    }
+    
+    func unsubscribe() {
+        let nc = NotificationCenter.default
+        
+        nc.removeObserver(self)
+    }
 }
 

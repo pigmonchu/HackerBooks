@@ -10,6 +10,10 @@ import UIKit
 
 class LibraryTableViewController: UITableViewController {
     
+    //MARK: - Constants
+    static let notificationName = Notification.Name(rawValue: "BookDidChange")
+    static let bookKey = "BookKey"
+    
     //MARK: - Properties
     let model : Library
     
@@ -57,6 +61,10 @@ class LibraryTableViewController: UITableViewController {
         }
         
         delegate?.libraryTableViewController(self, didSelectBook: book)
+        
+        // mandamos una notificación
+        notify(bookChanged: book)
+
 
 /*      let bookVC = BookViewController(model: book)
         self.delegate = bookVC
@@ -178,6 +186,22 @@ class LibraryTableViewController: UITableViewController {
     }
 }
 
+//MARK: - Delegator
+protocol LibraryTableViewControllerDelegate: class {
+    func libraryTableViewController(_ lVB: LibraryTableViewController, didSelectBook book: Book)
+    
+}
+
+//MARK: - Delegate
+
+extension LibraryTableViewController: LibraryTableViewControllerDelegate {
+    func libraryTableViewController(_ lVB: LibraryTableViewController, didSelectBook book: Book) {
+        let bookVC = BookViewController(model: book)
+        lVB.navigationController?.pushViewController(bookVC, animated: true)
+        bookVC.delegate = lVB
+    }
+}
+
 extension LibraryTableViewController: BookViewControllerDelegate {
     func bookViewController(_ booVC: BookViewController, didChangeBookFav book: Book) {
         
@@ -187,9 +211,18 @@ extension LibraryTableViewController: BookViewControllerDelegate {
     }
 }
 
-protocol LibraryTableViewControllerDelegate: class {
-    func libraryTableViewController(_ lVB: LibraryTableViewController, didSelectBook: Book)
+//MARK: - Notifications
+
+extension LibraryTableViewController {
     
+    func notify(bookChanged book : Book) {
+        //Crear instancia del Notification Center
+        let nc = NotificationCenter.default
+        
+        //Notificacion
+        let notification = Notification(name: LibraryTableViewController.notificationName, object: self, userInfo: [LibraryTableViewController.bookKey : book])
+        
+        //El grito
+        nc.post(notification)
+    }
 }
-
-
