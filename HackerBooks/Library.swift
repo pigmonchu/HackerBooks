@@ -28,8 +28,6 @@ class Library {
     
     var tagsFile  = IndexCards()    //key: Tag, Set: Titles
     var authorsFile = IndexCards()  //Key: Author, Set: Titles
-    fileprivate
-    var favouritesFile = Set<String>()
 
     //MARK: - Initializators
 
@@ -39,9 +37,6 @@ class Library {
             allBooks[book.title] = book
             self.storeAuthors(book: book)
             self.storeTags(book: book)
-            if book.isFav {
-                self.favouritesFile.insert(book.title)
-            }
         }
         
         
@@ -117,8 +112,13 @@ class Library {
     var favourites : BooksArray {
         get {
             var favourites = BooksArray()
-            for title in self.favouritesFile {
-                favourites.append(self.book(byTitle: title)!)
+            for title in self.allBooks {
+                guard let book = self.book(byTitle: title.key) else{
+                    continue
+                }
+                if book.isFav {
+                    favourites.append(book)
+                }
             }
             
             return favourites.sorted()

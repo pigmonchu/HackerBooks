@@ -13,12 +13,11 @@ import CoreData
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
         window = UIWindow(frame: UIScreen.main.bounds)
         var books = [Book]()
-        var json : JSONArray
         let mustSaveFile : Bool
         
 //Recupero datos de mi biblioteca en local o en remoto, según convenga
@@ -38,26 +37,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 throw HackerBooksErrors.remoteBooksUrlNotReachable
             }
             
-            json = try parse(data: dataJson!)
+            contextJson = try parse(data: dataJson!)
         
 //Decodifico los datos transformándolos en Book y guardando en local las images y pdfs si procede
-            for dict in json {
+            for dict in contextJson {
                 guard let book = decode(Book: dict) else {
                     continue
                 }
                 books.append(book)
             }
-            
-//Si mi fichero no existe en local lo salvo
+
+            //Si mi fichero no existe en local, le añado las rutas locales
             if mustSaveFile {
-                json = addLocals(toResource: json, cleanFav: true)
-                let stringJson = try serialize(json: json)
-                
-                if stringJson != nil {
-                    try saveFile(string: stringJson!, path: localFile)
-                    print("Grabo fichero")
-                }
+                contextJson = addLocals(toResource: contextJson, cleanFav: true)
             }
+
+//Si mi fichero no existe en local lo salvo -> Esto sí o sí al salir
             
         } catch {
             fatalError("Error while loading Model from JSON")
@@ -80,6 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        saveJsonContext()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -93,6 +89,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
+    
+        saveJsonContext()
         self.saveContext()
     }
 
@@ -139,6 +137,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
+    }
+    
+    func saveJsonContext() {
+        do {
+            
+            let stringJson = try serialize(json: contextJson)
+            
+            if stringJson != nil {
+                try saveFile(string: stringJson!, path: localFile)
+                print("Grabo fichero")
+            }
+        } catch {
+            fatalError("Error while saving JSON from Model")
+        }
+
     }
 
 }

@@ -9,6 +9,16 @@
 import Foundation
 import UIKit
 
+//MARK: - Aliases
+typealias JSONObject        = AnyObject
+typealias JSONDictionary    = [String : JSONObject]
+typealias JSONArray         = [JSONDictionary]
+typealias esLocal           = Bool
+typealias JSONDataPath      = (String, esLocal)
+
+//MARK: - Contexto JSON
+var contextJson : JSONArray = []
+
 //MARK: - Constants
 let localFile = "readable_books.json"
 let remoteCover = "image_url"
@@ -17,14 +27,6 @@ let _localCover = "image_local"
 let _localPDF = "pdf_local"
 let _imgPath = ""
 let _pdfPath = ""
-
-//MARK: - Aliases
-typealias JSONObject        = AnyObject
-typealias JSONDictionary    = [String : JSONObject]
-typealias JSONArray         = [JSONDictionary]
-typealias esLocal           = Bool
-typealias JSONDataPath      = (String, esLocal)
-
 
 /*
  {
@@ -36,8 +38,7 @@ typealias JSONDataPath      = (String, esLocal)
  }
  */
 
-
-//MARK: - Decodification
+//MARK: - Decodification JSON -> Object
 
 func decode(Book json: JSONDictionary) -> Book? {
     
@@ -221,9 +222,6 @@ func decodeIsFav(Book json: JSONDictionary) throws -> Bool {
     
 }
 
-
-
-
 //MARK: - Utils
 fileprivate
 func withoutData(array : [String]?) -> Bool {
@@ -353,6 +351,7 @@ func addLocals(toResource json: JSONArray, cleanFav: Bool = false) -> JSONArray 
 
     return newLibrary
 }
+
 
 //MARK: - Parsing
 func parse(data: Data) throws -> JSONArray {

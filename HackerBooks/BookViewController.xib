@@ -14,6 +14,7 @@
                 <outlet property="TAGsLabel" destination="pXf-be-qXS" id="Md5-2e-QMp"/>
                 <outlet property="authorsLabel" destination="Sdq-g1-GeT" id="EDY-ew-R1a"/>
                 <outlet property="coverView" destination="flu-b0-V3F" id="ovr-1s-sqH"/>
+                <outlet property="favouriteButton" destination="e1Q-CM-he1" id="cmS-hK-s8T"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>

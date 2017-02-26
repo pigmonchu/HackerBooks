@@ -13,8 +13,8 @@ class LibraryTableViewController: UITableViewController {
     //MARK: - Properties
     let model : Library
     
-    var dict : Library.SortedLibrary
-    var sections : [String]
+    var dict = Library.SortedLibrary()
+    var sections : [String] = []
     
     weak var delegate: LibraryTableViewControllerDelegate? = nil
     
@@ -22,16 +22,11 @@ class LibraryTableViewController: UITableViewController {
     
     init(model: Library) {
         self.model = model
- 
-        do {
-            dict = try model.booksSortedByTag()
-        } catch {
-            dict = Library.SortedLibrary()
-        }
-
-        sections = Array(dict.keys).sorted()
         
         super.init(nibName: nil, bundle: nil)
+
+        self.fixTags()
+
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -60,9 +55,11 @@ class LibraryTableViewController: UITableViewController {
             return
         }
         
-//        delegate?.libraryTableViewController(self, didSelectBook: book)
-  
+ //       delegate?.libraryTableViewController(self, didSelectBook: book)
+
         let bookVC = BookViewController(model: book)
+        self.delegate = bookVC
+        bookVC.delegate = self
         self.navigationController?.pushViewController(bookVC, animated: true)
     }
     
@@ -136,6 +133,17 @@ class LibraryTableViewController: UITableViewController {
     
 //MARK: Utilities
     
+    func fixTags() {
+        do {
+            dict = try model.booksSortedByTag()
+        } catch {
+            dict = Library.SortedLibrary()
+        }
+        
+        sections = Array(dict.keys).sorted()
+
+    }
+    
     func extractItems(array: [String], separator: String, maxLength: Int = 0, defaultText: String = "sin datos") -> String {
         var text = ""
         if array.count > 0 {
@@ -168,9 +176,18 @@ class LibraryTableViewController: UITableViewController {
     }
 }
 
-//MARK: - Delegates
-
-protocol LibraryTableViewControllerDelegate : class {
-    func libraryTableViewController(_ libVC: LibraryTableViewController, didSelectBook book: Book)
-
+extension LibraryTableViewController: BookViewControllerDelegate {
+    func bookViewController(_ booVC: BookViewController, didChangeBookFav book: Book) {
+        
+        fixTags()
+        self.tableView.reloadData()
+    
+    }
 }
+
+protocol LibraryTableViewControllerDelegate: class {
+    func libraryTableViewController(_ lVB: LibraryTableViewController, didSelectBook: Book)
+    
+}
+
+
