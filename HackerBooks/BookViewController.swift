@@ -97,6 +97,7 @@ class BookViewController: UIViewController {
 extension BookViewController: LibraryTableViewControllerDelegate  {
     
     func libraryTableViewController(_ lVC: LibraryTableViewController, didSelectBook book: Book) {
+        delegate = lVC
         model = book
         syncViewWithModel()
     }

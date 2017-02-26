@@ -35,6 +35,7 @@ class LibraryTableViewController: UITableViewController {
  
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.title = "Hacker Books"
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -55,13 +56,14 @@ class LibraryTableViewController: UITableViewController {
             return
         }
         
- //       delegate?.libraryTableViewController(self, didSelectBook: book)
+        delegate?.libraryTableViewController(self, didSelectBook: book)
 
-        let bookVC = BookViewController(model: book)
+/*      let bookVC = BookViewController(model: book)
         self.delegate = bookVC
         bookVC.delegate = self
         self.navigationController?.pushViewController(bookVC, animated: true)
-    }
+*/
+ }
     
     // MARK: - Table view data source
 

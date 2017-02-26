@@ -58,11 +58,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             fatalError("Error while loading Model from JSON")
         }
         
-// Creamos el modelo
+// Creamos el modelo para la Tabla de libros
         let model = Library.init(books: books)
         let libraryVC = LibraryTableViewController(model: model)
         let uNav = UINavigationController(rootViewController: libraryVC)
-        window?.rootViewController = uNav
+// Elegimos un libro y creamos el modelo del mismo
+
+        
+        let tag = Array(model.tagsFile.keys).sorted()[0]
+        let firstBook = model.book(atIndex: 0, forTag: tag)!
+        
+        let bookVC = BookViewController(model: firstBook)
+        libraryVC.delegate = bookVC
+        let cNav = UINavigationController(rootViewController: bookVC)
+//SplitVC
+        let splitVC = UISplitViewController()
+        splitVC.viewControllers = [uNav, cNav]
+        
+        window?.rootViewController = splitVC
         window?.makeKeyAndVisible()
         return true
     }

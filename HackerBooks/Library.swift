@@ -32,20 +32,13 @@ class Library {
     //MARK: - Initializators
 
     init(books : BooksArray) {
-        
         for book in books {
             allBooks[book.title] = book
             self.storeAuthors(book: book)
             self.storeTags(book: book)
         }
-        
-        
     }
     
-    init(books: Data) {
-        
-    }
-
     //MARK: - Accessors
     
     var tagsCount : Int {
@@ -69,6 +62,19 @@ class Library {
         return try subSebLibraryBy(arrayOfTitles: titles)
     }
 
+    func book(atIndex index: Int, forTag tag: String) -> Book? {
+        guard let titlesOfSection = self.tagsFile[tag] else {
+            return nil
+        }
+        let titles = Array(titlesOfSection).sorted()
+        
+        let title = titles[index]
+        
+        return self.book(byTitle: title)
+        
+        
+    }
+    
     func booksSorted(byIndexCard ixCards : IndexCards) throws -> SortedLibrary {
         
         var dict = SortedLibrary()
